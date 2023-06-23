@@ -1,10 +1,8 @@
-package main
-
-import "fmt"
+package maths
 
 // fibonacci is a function that returns
 // a function that returns an int.
-func fibonacci() func() int {
+func Fibonacci() func() int {
 	current := 0
 	next := 0
 	prev := 1
@@ -15,11 +13,4 @@ func fibonacci() func() int {
 		return current
 	}
 
-}
-
-func main() {
-	f := fibonacci()
-	for i := 0; i < 10; i++ {
-		fmt.Println(f())
-	}
 }
