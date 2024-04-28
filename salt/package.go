@@ -7,7 +7,9 @@ import (
 	"com/alexander/scratch/salt/commands"
 )
 
-var modelMap map[string]PackageModel
+//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
+//counterfeiter:generate -o internal/fake_dpkger.go com/alexander/scratch/salt/commands.Dpkg
+//counterfeiter:generate -o internal/fake_apter.go com/alexander/scratch/salt/commands.Apt
 
 type PackageModel struct {
 	Filepath     string
@@ -17,8 +19,8 @@ type PackageModel struct {
 }
 
 type Packager struct {
-	apt  commands.Apt
-	dpkg commands.Dpkg
+	Apt  commands.Apt
+	Dpkg commands.Dpkg
 }
 
 func NewPackager() Packager {
@@ -30,15 +32,23 @@ func NewPackager() Packager {
 		Cmd: command,
 	}
 	return Packager{
-		apt:  apter,
-		dpkg: dpkger,
+		Apt:  apter,
+		Dpkg: dpkger,
 	}
 }
 
-func (packager Packager) BuildPackage(name string) PackageModel {
-	// start with 1st package
-	standardOut, _, _ := packager.apt.DownloadPackage(name)
+func (packager Packager) Start(name string) PackageModel {
+	modelMap := make(map[string]PackageModel)
+	return packager.BuildPackage(name, modelMap)
+}
 
+func (packager Packager) BuildPackage(name string, modelMap map[string]PackageModel) PackageModel {
+	// start with 1st package
+	standardOut, _, err := packager.Apt.DownloadPackage(name)
+
+	if err != nil {
+		return PackageModel{}
+	}
 	packageModel := PackageModel{}
 	packageModel.GetPackageFilename(standardOut)
 
@@ -47,12 +57,12 @@ func (packager Packager) BuildPackage(name string) PackageModel {
 	modelMap[packageModel.Name] = packageModel
 
 	// Iterate through dependencies
-	dependencyNames := packager.dpkg.IdentifyDependencies(packageModel.Filepath)
+	dependencyNames := packager.Dpkg.IdentifyDependencies(packageModel.Filepath)
 
 	packageModel.dependencies = make(map[string]PackageModel, len(dependencyNames))
 
 	for _, name := range dependencyNames {
-		dep := packager.BuildPackage(name)
+		dep := packager.BuildPackage(name, modelMap)
 		packageModel.dependencies[dep.Name] = dep
 		// Need to check if the model already exists, if so add it to the dependencis list
 		// packager.BuildPackage(name)
@@ -68,9 +78,10 @@ func (packageModel *PackageModel) GetPackageFilename(name string) {
 	fmt.Printf("Package download output: %#v\n", name)
 	outputArray := strings.Split(name, "\n")
 	fmt.Printf("Number of lines: %d\n", len(outputArray))
-	fmt.Println(outputArray[0])
-	fmt.Println(outputArray[1])
-	fmt.Println(outputArray[2])
+	for index, _ := range outputArray {
+		fmt.Println(outputArray[index])
+	}
+
 	downloadOutputLine := strings.Split(outputArray[0], " ")
 	// Length should be 8
 	// Get:1 http://gb.archive.ubuntu.com/ubuntu focal/universe amd64 dos2unix amd64 7.4.0-2 [374 kB]
