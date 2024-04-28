@@ -15,7 +15,7 @@ type PackageModel struct {
 	Filepath     string
 	Name         string
 	Version      string
-	dependencies map[string]PackageModel
+	Dependencies map[string]PackageModel
 }
 
 type Packager struct {
@@ -59,11 +59,12 @@ func (packager Packager) BuildPackage(name string, modelMap map[string]PackageMo
 	// Iterate through dependencies
 	dependencyNames := packager.Dpkg.IdentifyDependencies(packageModel.Filepath)
 
-	packageModel.dependencies = make(map[string]PackageModel, len(dependencyNames))
+	fmt.Printf("Dependencies %#v\n", dependencyNames)
+	packageModel.Dependencies = make(map[string]PackageModel, len(dependencyNames))
 
 	for _, name := range dependencyNames {
 		dep := packager.BuildPackage(name, modelMap)
-		packageModel.dependencies[dep.Name] = dep
+		packageModel.Dependencies[dep.Name] = dep
 		// Need to check if the model already exists, if so add it to the dependencis list
 		// packager.BuildPackage(name)
 

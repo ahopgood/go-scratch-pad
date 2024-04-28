@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"com/alexander/scratch/salt/internal"
+	"com/alexander/scratch/salt/commands/internal"
 )
 
 var _ = Describe("Download", func() {
