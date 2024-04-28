@@ -1,12 +1,11 @@
 package commands_test
 
 import (
+	"com/alexander/scratch/salt/commands"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"com/alexander/scratch/salt"
 )
 
 // ginkgo --focus Install
@@ -17,7 +16,7 @@ var _ = Describe("Install", func() {
 			testFile, err := os.ReadFile("internal/install/not-found.output")
 			Expect(err).ToNot(HaveOccurred())
 
-			dpkg := salt.Dpkger{}
+			dpkg := commands.Dpkger{}
 			dependencies := dpkg.ParseDependencies(string(testFile))
 			Expect(len(dependencies)).To(Equal(0))
 		})
@@ -28,7 +27,7 @@ var _ = Describe("Install", func() {
 			testFile, err := os.ReadFile("internal/install/aglfn.output")
 			Expect(err).ToNot(HaveOccurred())
 
-			dpkg := salt.Dpkger{}
+			dpkg := commands.Dpkger{}
 			dependencies := dpkg.ParseDependencies(string(testFile))
 			Expect(len(dependencies)).To(Equal(0))
 		})
@@ -39,7 +38,7 @@ var _ = Describe("Install", func() {
 			testFile, err := os.ReadFile("internal/install/dos2unix.output")
 			Expect(err).ToNot(HaveOccurred())
 
-			dpkg := salt.Dpkger{}
+			dpkg := commands.Dpkger{}
 			dependencies := dpkg.ParseDependencies(string(testFile))
 			Expect(len(dependencies)).To(Equal(1))
 			Expect(dependencies[0]).To(Equal("libc6 (>= 2.4)"))
@@ -52,7 +51,7 @@ var _ = Describe("Install", func() {
 			testFile, err := os.ReadFile("internal/install/salt-minion.output")
 			Expect(err).ToNot(HaveOccurred())
 
-			dpkg := salt.Dpkger{}
+			dpkg := commands.Dpkger{}
 			dependencies := dpkg.ParseDependencies(string(testFile))
 			Expect(len(dependencies)).To(Equal(4))
 			Expect(dependencies[0]).To(Equal("bsdmainutils"))

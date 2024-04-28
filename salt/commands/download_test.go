@@ -1,12 +1,12 @@
 package commands_test
 
 import (
+	"com/alexander/scratch/salt/commands"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"com/alexander/scratch/salt"
 	"com/alexander/scratch/salt/internal"
 )
 
@@ -46,7 +46,7 @@ var _ = Describe("Download", func() {
 
 			command.CommandReturns(errorMessage, 130, nil)
 
-			a := salt.Apter{
+			a := commands.Apter{
 				Cmd: command,
 			}
 
@@ -75,7 +75,7 @@ var _ = Describe("Download", func() {
 
 			command.CommandReturns(successMessage, 0, nil)
 
-			a := salt.Apter{
+			a := commands.Apter{
 				Cmd: command,
 			}
 
@@ -99,8 +99,8 @@ var _ = Describe("Download", func() {
 	When("Using LinuxCommand", func() {
 		// Possibly create a table test here using: command, standard out, standard error, exit status?
 		When("Package not recognised", func() {
-			a := salt.Apter{
-				Cmd: salt.LinuxCommand{},
+			a := commands.Apter{
+				Cmd: commands.LinuxCommand{},
 			}
 
 			It("fails with error message", func() {
@@ -121,8 +121,8 @@ var _ = Describe("Download", func() {
 		})
 
 		When("Package recognised", func() {
-			a := salt.Apter{
-				Cmd: salt.LinuxCommand{},
+			a := commands.Apter{
+				Cmd: commands.LinuxCommand{},
 			}
 
 			output, statusCode, err := a.DownloadPackage("dos2unix")
