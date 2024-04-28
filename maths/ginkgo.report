@@ -1,0 +1,310 @@
+[
+  {
+    "SuitePath": "/vagrant/maths",
+    "SuiteDescription": "Maths Suite",
+    "SuiteLabels": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 6,
+      "SpecsThatWillRun": 1
+    },
+    "StartTime": "2023-09-24T19:12:47.480395764Z",
+    "EndTime": "2023-09-24T19:12:47.500795548Z",
+    "RunTime": 20399790,
+    "SuiteConfig": {
+      "RandomSeed": 1695582765,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": [
+        "Fibonacci Testing"
+      ],
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "FailOnPending": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3598274032116,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": [
+          "Fibonacci",
+          "Testing"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 11
+          },
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 18
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/vagrant/maths/fibonacci_test.go",
+          "LineNumber": 19
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeText": "Should pass",
+        "State": "passed",
+        "StartTime": "2023-09-24T19:12:47.491839757Z",
+        "EndTime": "2023-09-24T19:12:47.499848998Z",
+        "RunTime": 8009168,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/vagrant/maths/fibonacci_test.go",
+              "LineNumber": 13
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2023-09-24T19:12:47.495606076Z"
+            },
+            "Message": "Fibonacci",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/vagrant/maths/fibonacci_test.go",
+              "LineNumber": 13
+            },
+            "TimelineLocation": {
+              "Order": 3,
+              "Time": "2023-09-24T19:12:47.498038571Z"
+            },
+            "Message": "Fibonacci",
+            "Duration": 2432449,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/vagrant/maths/fibonacci_test.go",
+              "LineNumber": 19
+            },
+            "TimelineLocation": {
+              "Order": 4,
+              "Time": "2023-09-24T19:12:47.498047595Z"
+            },
+            "Message": "Should pass",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/vagrant/maths/fibonacci_test.go",
+              "LineNumber": 19
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2023-09-24T19:12:47.499838954Z"
+            },
+            "Message": "Should pass",
+            "Duration": 1791363,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Fibonacci",
+          "when on one iteration"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 11
+          },
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 23
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/vagrant/maths/fibonacci_test.go",
+          "LineNumber": 24
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeText": "returns 0",
+        "State": "skipped",
+        "StartTime": "2023-09-24T19:12:47.500549691Z",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Fibonacci",
+          "when on second iteration"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 11
+          },
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 29
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/vagrant/maths/fibonacci_test.go",
+          "LineNumber": 30
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeText": "returns 1",
+        "State": "skipped",
+        "StartTime": "2023-09-24T19:12:47.500635549Z",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Fibonacci",
+          "when on third iteration"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 11
+          },
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 36
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/vagrant/maths/fibonacci_test.go",
+          "LineNumber": 37
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeText": "returns 1",
+        "State": "skipped",
+        "StartTime": "2023-09-24T19:12:47.50068468Z",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Fibonacci",
+          "when on fourth iterations"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 11
+          },
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 44
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/vagrant/maths/fibonacci_test.go",
+          "LineNumber": 45
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeText": "returns 2",
+        "State": "skipped",
+        "StartTime": "2023-09-24T19:12:47.500723957Z",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Fibonacci",
+          "when on fifth iterations"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 11
+          },
+          {
+            "FileName": "/vagrant/maths/fibonacci_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/vagrant/maths/fibonacci_test.go",
+          "LineNumber": 54
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeText": "returns 3",
+        "State": "skipped",
+        "StartTime": "2023-09-24T19:12:47.500770725Z",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      }
+    ]
+  }
+]

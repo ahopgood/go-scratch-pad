@@ -1,10 +1,10 @@
 package salt
 
 import (
-	"errors"
 	"fmt"
-	"os/exec"
 	"strings"
+
+	"com/alexander/scratch/salt/commands"
 )
 
 var modelMap map[string]PackageModel
@@ -13,24 +13,55 @@ type PackageModel struct {
 	Filepath     string
 	Name         string
 	Version      string
-	dependencies []PackageModel
+	dependencies map[string]PackageModel
 }
 
-// Interface for executing a command
-//
-//go:generate go run github.com/maxbrunsfeld/counterfeiter/v6 -generate
-//counterfeiter:generate -o internal/fake_command.go . Command
-type Command interface {
-	Command(programName string, args ...string) (string, int, error)
+type Packager struct {
+	apt  commands.Apt
+	dpkg commands.Dpkg
 }
 
-// Interfaces may allow for faking when testing our native commands
-type Apt interface {
-	DownloadPackage(name string) (string, int, error)
+func NewPackager() Packager {
+	command := commands.LinuxCommand{}
+	apter := commands.Apter{
+		Cmd: command,
+	}
+	dpkger := commands.Dpkger{
+		Cmd: command,
+	}
+	return Packager{
+		apt:  apter,
+		dpkg: dpkger,
+	}
 }
 
-type Dpkg interface {
-	installPackage(filepath string)
+func (packager Packager) BuildPackage(name string) PackageModel {
+	// start with 1st package
+	standardOut, _, _ := packager.apt.DownloadPackage(name)
+
+	packageModel := PackageModel{}
+	packageModel.GetPackageFilename(standardOut)
+
+	// Add packageModel to map under package name
+	// packageModel.Name
+	modelMap[packageModel.Name] = packageModel
+
+	// Iterate through dependencies
+	dependencyNames := packager.dpkg.IdentifyDependencies(packageModel.Filepath)
+
+	packageModel.dependencies = make(map[string]PackageModel, len(dependencyNames))
+
+	for _, name := range dependencyNames {
+		dep := packager.BuildPackage(name)
+		packageModel.dependencies[dep.Name] = dep
+		// Need to check if the model already exists, if so add it to the dependencis list
+		// packager.BuildPackage(name)
+
+		// Download package, generate model.
+		// Add this model to the rootPackageModel.dependencies
+		// Add this model to the master map
+	}
+	return packageModel
 }
 
 func (packageModel *PackageModel) GetPackageFilename(name string) {

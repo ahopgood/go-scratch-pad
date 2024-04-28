@@ -14,6 +14,12 @@ var _ = Describe("Fibonacci", func() {
 		fibonacci = maths.Fibonacci()
 	})
 
+	
+	Context("Testing", func(){
+		It("Should pass", func() {
+			Expect("Foo").To(Equal("Foo"))
+		})
+	})
 	Context("when on one iteration", func() {
 		It("returns 0", func() {
 			Expect(fibonacci()).To(Equal(0))
