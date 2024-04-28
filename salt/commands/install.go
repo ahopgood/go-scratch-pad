@@ -3,7 +3,6 @@ package commands
 import "strings"
 
 // Interfaces may allow for faking when testing our native commands
-
 type Dpkg interface {
 	IdentifyDependencies(filename string) []string
 	ParseDependencies(output string) []string

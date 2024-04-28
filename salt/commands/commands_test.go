@@ -1,19 +1,18 @@
 package commands_test
 
 import (
+	"com/alexander/scratch/salt/commands"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"com/alexander/scratch/salt"
 )
 
 var _ = Describe("Commands", func() {
 	// Possibly create a table test here using: command, standard out, standard error, exit status?
 	When("Command fails", func() {
 
-		cmd := salt.LinuxCommand{}
+		cmd := commands.LinuxCommand{}
 
 		It("returns error, non-zero exit code and standard error", func() {
 			// vagrant@vagrant:~$ apt download test
@@ -33,7 +32,7 @@ var _ = Describe("Commands", func() {
 	})
 
 	When("Command succeeds", func() {
-		cmd := salt.LinuxCommand{}
+		cmd := commands.LinuxCommand{}
 
 		output, statusCode, err := cmd.Command("apt", "download", "dos2unix")
 
