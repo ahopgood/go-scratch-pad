@@ -2,7 +2,9 @@ package salt_test
 
 import (
 	"com/alexander/scratch/salt/internal"
+	"com/alexander/scratch/salt/puml"
 	"errors"
+	"fmt"
 	"os"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -76,6 +78,15 @@ Fetched 374 kB in 0s (4,447 kB/s)`
 		`Get:1 http://gb.archive.ubuntu.com/ubuntu focal-updates/main amd64 libc6 amd64 2.31-0ubuntu9.15 [2,723 kB]
 Fetched 2,723 kB in 0s (12.4 MB/s)`
 
+	jq := "Get:1 http://gb.archive.ubuntu.com/ubuntu focal-updates/universe amd64 jq amd64 1.6-1ubuntu0.20.04.1 [50.2 kB]\nFetched 50.2 kB in 0s (1,666 kB/s)\n"
+	jqFile := "jq_1.6-1ubuntu0.20.04.1_amd64.deb"
+	libjq1 := "Get:1 http://gb.archive.ubuntu.com/ubuntu focal-updates/universe amd64 libjq1 amd64 1.6-1ubuntu0.20.04.1 [121 kB]\nFetched 121 kB in 0s (2,898 kB/s)\n"
+	libjq1File := "libjq1_1.6-1ubuntu0.20.04.1_amd64.deb"
+	libonig5 := "Get:1 http://gb.archive.ubuntu.com/ubuntu focal/universe amd64 libonig5 amd64 6.9.4-1 [142 kB]\nFetched 142 kB in 0s (3,228 kB/s)\n"
+	libonig5File := "libonig5_6.9.4-1_amd64.deb"
+	libc6 := "Get:1 http://gb.archive.ubuntu.com/ubuntu focal-updates/main amd64 libc6 amd64 2.31-0ubuntu9.15 [2,723 kB]\nFetched 2,723 kB in 0s (20.9 MB/s)\n"
+	libc6File := "libc6_2.31-0ubuntu9.15_amd64.deb"
+
 	FWhen("BuildPackage", func() {
 		When("Package does not exist", func() {
 			It("Produces nothing", func() {
@@ -89,7 +100,7 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 					Dpkg: dpkger,
 				}
 
-				modelMap := make(map[string]salt.PackageModel)
+				modelMap := make(map[string]*salt.PackageModel)
 				model := packager.BuildPackage("", modelMap)
 				By("Not adding a model to the map", func() {
 					Expect(len(modelMap)).To(Equal(0))
@@ -123,7 +134,7 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 					Dpkg: dpkger,
 				}
 
-				modelMap := make(map[string]salt.PackageModel)
+				modelMap := make(map[string]*salt.PackageModel)
 				model := packager.BuildPackage("", modelMap)
 
 				By("Adding a model to the map", func() {
@@ -141,7 +152,7 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 			})
 		})
 
-		FWhen("Package has one dependency", func() {
+		When("Package has one dependency", func() {
 			It("Produces two models", func() {
 				// Successfully download the package
 				apter := &internal.FakeApt{}
@@ -158,7 +169,7 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 					Dpkg: dpkger,
 				}
 
-				modelMap := make(map[string]salt.PackageModel)
+				modelMap := make(map[string]*salt.PackageModel)
 				_ = packager.BuildPackage("", modelMap)
 
 				By("Invoking Apt and Dpkg twice", func() {
@@ -184,11 +195,96 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 					model := modelMap["dos2unix"]
 					Expect(model.Dependencies["libc6"]).To(Not(BeNil()))
 				})
-
 			})
 		})
 
-		When("Package has shared dependency", func() {
+		FWhen("Package has shared dependencies", func() {
+			It("Produces four models", func() {
+				// Successfully download the package
+				apter := &internal.FakeApt{}
+				apter.DownloadPackageReturnsOnCall(0, jq, 0, nil)
+				apter.DownloadPackageReturnsOnCall(1, libjq1, 0, nil)
+				apter.DownloadPackageReturnsOnCall(2, libonig5, 0, nil)
+				apter.DownloadPackageReturnsOnCall(3, libc6, 0, nil)
+
+				// No dependencies found via dpkg -I
+				dpkger := &internal.FakeDpkg{}
+				dpkger.IdentifyDependenciesReturnsOnCall(0, []string{"libjq1", "libc6"})
+				dpkger.IdentifyDependenciesReturnsOnCall(1, []string{"libonig5", "libc6"})
+				dpkger.IdentifyDependenciesReturnsOnCall(2, []string{"libc6"})
+				dpkger.IdentifyDependenciesReturnsOnCall(3, []string{})
+
+				packager := salt.Packager{
+					Apt:  apter,
+					Dpkg: dpkger,
+				}
+
+				modelMap := make(map[string]*salt.PackageModel)
+				_ = packager.BuildPackage("", modelMap)
+
+				By("Invoking Apt and Dpkg twice", func() {
+					Expect(apter.DownloadPackageCallCount()).To(Equal(4))
+					Expect(dpkger.IdentifyDependenciesCallCount()).To(Equal(4))
+				})
+				By("Adding four models to the map", func() {
+					Expect(len(modelMap)).To(Equal(4))
+				})
+				By("Returning jq model", func() {
+					model := modelMap["jq"]
+					Expect(model.Name).To(Equal("jq"))
+					//Expect(model.Version).To(Equal("7.4.0-2"))
+					Expect(model.Filepath).To(Equal(jqFile))
+				})
+				By("Returning libjq1 model", func() {
+					model := modelMap["libjq1"]
+					Expect(model.Name).To(Equal("libjq1"))
+					//Expect(model.Version).To(Equal("2.31-0ubuntu9.15"))
+					Expect(model.Filepath).To(Equal(libjq1File))
+				})
+				By("Returning libonig5 model", func() {
+					model := modelMap["libonig5"]
+					Expect(model.Name).To(Equal("libonig5"))
+					//Expect(model.Version).To(Equal("2.31-0ubuntu9.15"))
+					Expect(model.Filepath).To(Equal(libonig5File))
+				})
+
+				By("Returning libc6 model", func() {
+					model := modelMap["libc6"]
+					Expect(model.Name).To(Equal("libc6"))
+					//Expect(model.Version).To(Equal("2.31-0ubuntu9.15"))
+					Expect(model.Filepath).To(Equal(libc6File))
+				})
+				By("Adding libc6 to the jq dependencies map", func() {
+					model := modelMap["jq"]
+					Expect(model.Dependencies["libc6"]).To(Not(BeNil()))
+				})
+				By("Adding libc6 to the jq dependencies map", func() {
+					model := modelMap["libjq1"]
+					Expect(model.Dependencies["libc6"]).To(Not(BeNil()))
+				})
+				By("Adding libonig5 to the  dependencies map", func() {
+					model := modelMap["libonig5"]
+					Expect(model.Dependencies["libc6"]).To(Not(BeNil()))
+				})
+				By("Producing a puml diagram", func() {
+					dependencies := make([]puml.Dependency, 0)
+					// Loop through the model dependencies?
+					for key, fromModel := range modelMap {
+						fmt.Printf("%s %#v\n", key, fromModel)
+						for _, toModel := range fromModel.Dependencies {
+							fmt.Printf("From %s to %s\n", fromModel.Name, toModel.Name)
+							dependencies = append(dependencies, puml.Dependency{
+								From: fromModel.Name,
+								To:   toModel.Name,
+							})
+						}
+					}
+					puml := puml.NewUml(
+						puml.NewDigraph(dependencies),
+					)
+					fmt.Println(puml.Contents())
+				})
+			})
 		})
 	})
 })

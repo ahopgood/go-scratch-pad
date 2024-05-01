@@ -15,7 +15,7 @@ type PackageModel struct {
 	Filepath     string
 	Name         string
 	Version      string
-	Dependencies map[string]PackageModel
+	Dependencies map[string]*PackageModel
 }
 
 type Packager struct {
@@ -37,42 +37,41 @@ func NewPackager() Packager {
 	}
 }
 
-func (packager Packager) Start(name string) PackageModel {
-	modelMap := make(map[string]PackageModel)
+func (packager Packager) Start(name string) *PackageModel {
+	modelMap := make(map[string]*PackageModel)
 	return packager.BuildPackage(name, modelMap)
 }
 
-func (packager Packager) BuildPackage(name string, modelMap map[string]PackageModel) PackageModel {
+func (packager Packager) BuildPackage(name string, modelMap map[string]*PackageModel) *PackageModel {
+	model, ok := modelMap[name]
+	if ok {
+		return model
+	}
 	// start with 1st package
 	standardOut, _, err := packager.Apt.DownloadPackage(name)
 
 	if err != nil {
-		return PackageModel{}
+		return &PackageModel{}
 	}
 	packageModel := PackageModel{}
 	packageModel.GetPackageFilename(standardOut)
 
 	// Add packageModel to map under package name
 	// packageModel.Name
-	modelMap[packageModel.Name] = packageModel
-
+	modelMap[packageModel.Name] = &packageModel
 	// Iterate through dependencies
 	dependencyNames := packager.Dpkg.IdentifyDependencies(packageModel.Filepath)
 
 	fmt.Printf("Dependencies %#v\n", dependencyNames)
-	packageModel.Dependencies = make(map[string]PackageModel, len(dependencyNames))
+	fmt.Printf("Dependencies length %d\n", len(dependencyNames))
+	packageModel.Dependencies = make(map[string]*PackageModel, len(dependencyNames))
 
 	for _, name := range dependencyNames {
+		fmt.Printf("Building dependency [%s] for %s \n", name, packageModel.Name)
 		dep := packager.BuildPackage(name, modelMap)
 		packageModel.Dependencies[dep.Name] = dep
-		// Need to check if the model already exists, if so add it to the dependencis list
-		// packager.BuildPackage(name)
-
-		// Download package, generate model.
-		// Add this model to the rootPackageModel.dependencies
-		// Add this model to the master map
 	}
-	return packageModel
+	return &packageModel
 }
 
 func (packageModel *PackageModel) GetPackageFilename(name string) {
