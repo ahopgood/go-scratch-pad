@@ -1,6 +1,7 @@
-package salt_test
+package debendency_test
 
 import (
+	"com/alexander/scratch/salt/debendency"
 	"com/alexander/scratch/salt/internal"
 	"com/alexander/scratch/salt/puml"
 	"errors"
@@ -9,8 +10,6 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"com/alexander/scratch/salt"
 )
 
 // ginkgo --focus Package
@@ -21,7 +20,7 @@ var _ = Describe("Package", func() {
 	// When("Package not recognised", func() {
 	// 	It("fails with error message", func() {
 	// 		// vagrant@vagrant:~$ apt download test
-	// 		// E: Unable to locate package test
+	// 		// E: Unable to locate debendency test
 	// 		// echo $?
 	// 		// 130
 	// 		packageModel.DownloadPackage("")
@@ -57,7 +56,7 @@ var _ = Describe("Package", func() {
 					`Get:1 http://gb.archive.ubuntu.com/ubuntu focal/universe amd64 dos2unix amd64 7.4.0-2 [374 kB]
 Fetched 374 kB in 0s (4,447 kB/s)`
 
-				model := salt.PackageModel{}
+				model := debendency.PackageModel{}
 				model.GetPackageFilename(successMessage)
 				Expect(model.Name).To(Equal("dos2unix"))
 				Expect(model.Version).To(Equal("7.4.0-2"))
@@ -90,17 +89,17 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 	FWhen("BuildPackage", func() {
 		When("Package does not exist", func() {
 			It("Produces nothing", func() {
-				// Fail to download the package
+				// Fail to download the debendency
 				apter := &internal.FakeApt{}
 				apter.DownloadPackageReturns("", 0, errors.New("not found"))
 
 				dpkger := &internal.FakeDpkg{}
-				packager := salt.Packager{
+				packager := debendency.Packager{
 					Apt:  apter,
 					Dpkg: dpkger,
 				}
 
-				modelMap := make(map[string]*salt.PackageModel)
+				modelMap := make(map[string]*debendency.PackageModel)
 				model := packager.BuildPackage("", modelMap)
 				By("Not adding a model to the map", func() {
 					Expect(len(modelMap)).To(Equal(0))
@@ -121,7 +120,7 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 
 		When("Package has no dependencies", func() {
 			It("Produces a single model", func() {
-				// Successfully download the package
+				// Successfully download the debendency
 				apter := &internal.FakeApt{}
 				apter.DownloadPackageReturns(successMessage, 0, nil)
 
@@ -129,12 +128,12 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 				dpkger := &internal.FakeDpkg{}
 				dpkger.IdentifyDependenciesReturns([]string{})
 
-				packager := salt.Packager{
+				packager := debendency.Packager{
 					Apt:  apter,
 					Dpkg: dpkger,
 				}
 
-				modelMap := make(map[string]*salt.PackageModel)
+				modelMap := make(map[string]*debendency.PackageModel)
 				model := packager.BuildPackage("", modelMap)
 
 				By("Adding a model to the map", func() {
@@ -154,7 +153,7 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 
 		When("Package has one dependency", func() {
 			It("Produces two models", func() {
-				// Successfully download the package
+				// Successfully download the debendency
 				apter := &internal.FakeApt{}
 				apter.DownloadPackageReturnsOnCall(0, successMessage, 0, nil)
 				apter.DownloadPackageReturnsOnCall(1, libc6SuccessMessage, 0, nil)
@@ -164,12 +163,12 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 				dpkger.IdentifyDependenciesReturnsOnCall(0, []string{"libc6"})
 				dpkger.IdentifyDependenciesReturnsOnCall(1, []string{})
 
-				packager := salt.Packager{
+				packager := debendency.Packager{
 					Apt:  apter,
 					Dpkg: dpkger,
 				}
 
-				modelMap := make(map[string]*salt.PackageModel)
+				modelMap := make(map[string]*debendency.PackageModel)
 				_ = packager.BuildPackage("", modelMap)
 
 				By("Invoking Apt and Dpkg twice", func() {
@@ -200,7 +199,7 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 
 		FWhen("Package has shared dependencies", func() {
 			It("Produces four models", func() {
-				// Successfully download the package
+				// Successfully download the debendency
 				apter := &internal.FakeApt{}
 				apter.DownloadPackageReturnsOnCall(0, jq, 0, nil)
 				apter.DownloadPackageReturnsOnCall(1, libjq1, 0, nil)
@@ -214,12 +213,12 @@ Fetched 2,723 kB in 0s (12.4 MB/s)`
 				dpkger.IdentifyDependenciesReturnsOnCall(2, []string{"libc6"})
 				dpkger.IdentifyDependenciesReturnsOnCall(3, []string{})
 
-				packager := salt.Packager{
+				packager := debendency.Packager{
 					Apt:  apter,
 					Dpkg: dpkger,
 				}
 
-				modelMap := make(map[string]*salt.PackageModel)
+				modelMap := make(map[string]*debendency.PackageModel)
 				_ = packager.BuildPackage("", modelMap)
 
 				By("Invoking Apt and Dpkg twice", func() {

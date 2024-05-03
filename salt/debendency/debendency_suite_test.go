@@ -1,4 +1,4 @@
-package salt_test
+package debendency_test
 
 import (
 	"testing"

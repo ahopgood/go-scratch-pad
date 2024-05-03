@@ -1,4 +1,4 @@
-package salt
+package debendency
 
 import (
 	"fmt"
