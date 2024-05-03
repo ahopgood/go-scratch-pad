@@ -32,6 +32,8 @@ func (dpkg Dpkger) IdentifyDependencies(filename string) []string {
 
 }
 
+// Need to update to handle these bracketed versions
+// "libjq1 (= 1.6-1ubuntu0.20.04.1)", "libc6 (>= 2.4)"
 func (dpkg Dpkger) ParseDependencies(output string) []string {
 
 	//Find the line Depends:
@@ -41,6 +43,8 @@ func (dpkg Dpkger) ParseDependencies(output string) []string {
 		dependencies := strings.Split(depends, ",")
 		for i := range dependencies {
 			dependencies[i] = strings.TrimSpace(dependencies[i])
+			dependencies[i] = strings.Split(dependencies[i], " ")[0]
+			//dependencies[i] = strings.TrimSpace(dep)
 		}
 		return dependencies
 	}
