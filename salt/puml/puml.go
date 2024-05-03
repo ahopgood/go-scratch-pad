@@ -1,6 +1,28 @@
 package puml
 
-import "fmt"
+import (
+	"com/alexander/scratch/salt/debendency"
+	"fmt"
+)
+
+func GenerateDiagram(modelMap map[string]*debendency.PackageModel) Uml {
+	dependencies := make([]Dependency, 0)
+	// Loop through the model dependencies?
+	for key, fromModel := range modelMap {
+		fmt.Printf("%s %#v\n", key, fromModel)
+		for _, toModel := range fromModel.Dependencies {
+			fmt.Printf("From %s to %s\n", fromModel.Name, toModel.Name)
+			dependencies = append(dependencies, Dependency{
+				From: fromModel.Name,
+				To:   toModel.Name,
+			})
+		}
+	}
+	puml := NewUml(
+		NewDigraph(dependencies),
+	)
+	return puml
+}
 
 type Uml struct {
 	start   string
