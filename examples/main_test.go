@@ -36,7 +36,7 @@ var _ = Describe("Main", func() {
 			Expect(actualLogLevel).To(MatchRegexp("^[[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}\\.[[:digit:]]{6}$"))
 		})
 
-		It("should log code locations", func() {
+		It("should log short style code locations", func() {
 			var buf bytes.Buffer
 			log.SetFlags(log.LstdFlags | log.Lshortfile)
 			log.SetOutput(&buf)
@@ -47,8 +47,35 @@ var _ = Describe("Main", func() {
 			actualLogLevel := strings.Fields(buf.String())[2]
 			Expect(actualLogLevel).To(MatchRegexp("[[:alpha:]]+_test\\.go:[[:digit:]]+:"))
 		})
+
+		It("should log long style code locations", func() {
+			var buf bytes.Buffer
+			log.SetFlags(log.LstdFlags | log.Llongfile)
+			log.SetOutput(&buf)
+
+			//2024/09/22 14:16:52 DEBUG test message
+			slog.Info("test message")
+			fmt.Println(buf.String())
+			actualLogLevel := strings.Fields(buf.String())[2]
+			Expect(actualLogLevel).To(MatchRegexp("examples/[[:alpha:]]+_test\\.go:[[:digit:]]+:"))
+		})
+
+		It("should log with key-value pair", func() {
+			var buf bytes.Buffer
+			log.SetFlags(log.LstdFlags)
+			log.SetOutput(&buf)
+
+			//2024/09/22 14:16:52 DEBUG test message
+			slog.Info("test message", "mykey", "myvalue")
+
+			fmt.Println(buf.String())
+			actualLogLevel := strings.Fields(buf.String())[5]
+			Expect(actualLogLevel).To(Equal("mykey=myvalue"))
+		})
+
 		It("should not be in json", func() {
 			var buf bytes.Buffer
+			log.SetFlags(log.LstdFlags)
 			log.SetOutput(&buf)
 
 			//2024/09/22 14:16:52 DEBUG test message
@@ -60,6 +87,7 @@ var _ = Describe("Main", func() {
 		DescribeTable("should default to Info level",
 			func(level slog.Level, expectedLevel string, shouldLog bool) {
 				var buf bytes.Buffer
+				log.SetFlags(log.LstdFlags)
 				log.SetOutput(&buf)
 
 				slog.Log(context.Background(), level, "test message")
